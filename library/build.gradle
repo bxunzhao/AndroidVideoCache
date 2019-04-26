@@ -12,12 +12,12 @@ apply plugin: 'idea'
 apply plugin: 'bintray-release'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '25.0.2'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         minSdkVersion 9
-        targetSdkVersion 23
+        targetSdkVersion 28
         versionCode 22
         versionName '2.7.1'
     }
@@ -36,7 +36,7 @@ idea {
 }
 
 dependencies {
-    
+    compile 'com.squareup.okhttp3:okhttp:3.3.1'
 }
 
 publish {
