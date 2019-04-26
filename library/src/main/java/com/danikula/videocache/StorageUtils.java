@@ -3,8 +3,8 @@ package com.danikula.videocache;
 import android.content.Context;
 import android.os.Environment;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 
 import java.io.File;
 
@@ -20,7 +20,6 @@ import static android.os.Environment.MEDIA_MOUNTED;
  */
 final class StorageUtils {
 
-    private static final Logger LOG = LoggerFactory.getLogger("StorageUtils");
     private static final String INDIVIDUAL_DIR_NAME = "video-cache";
 
     /**

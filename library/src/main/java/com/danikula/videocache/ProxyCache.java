@@ -1,7 +1,7 @@
 package com.danikula.videocache;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -18,7 +18,6 @@ import static com.danikula.videocache.Preconditions.checkNotNull;
  */
 class ProxyCache {
 
-    private static final Logger LOG = LoggerFactory.getLogger("ProxyCache");
     private static final int MAX_READ_SOURCE_ATTEMPTS = 1;
 
     private final Source source;

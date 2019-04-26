@@ -13,9 +13,6 @@ import com.danikula.videocache.headers.HeaderInjector;
 import com.danikula.videocache.sourcestorage.SourceInfoStorage;
 import com.danikula.videocache.sourcestorage.SourceInfoStorageFactory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -53,7 +50,6 @@ import static com.danikula.videocache.Preconditions.checkNotNull;
  */
 public class HttpProxyCacheServer {
 
-    private static final Logger LOG = LoggerFactory.getLogger("HttpProxyCacheServer");
     private static final String PROXY_HOST = "127.0.0.1";
 
     private final Object clientsLock = new Object();
