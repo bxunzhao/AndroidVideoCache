@@ -22,12 +22,12 @@ import static com.danikula.videocache.Preconditions.checkNotNull;
  */
 final class HttpProxyCacheServerClients {
 
-    private final AtomicInteger clientsCount = new AtomicInteger(0);
-    private final String url;
-    private volatile HttpProxyCache proxyCache;
-    private final List<CacheListener> listeners = new CopyOnWriteArrayList<>();
-    private final CacheListener uiCacheListener;
-    private final Config config;
+    private final    AtomicInteger       clientsCount = new AtomicInteger(0);
+    private final    String              url;
+    private volatile HttpProxyCache      proxyCache;
+    private final    List<CacheListener> listeners    = new CopyOnWriteArrayList<>();
+    private final    CacheListener       uiCacheListener;
+    private final    Config              config;
 
     public HttpProxyCacheServerClients(String url, Config config) {
         this.url = checkNotNull(url);
@@ -88,7 +88,7 @@ final class HttpProxyCacheServerClients {
 
     private static final class UiListenerHandler extends Handler implements CacheListener {
 
-        private final String url;
+        private final String              url;
         private final List<CacheListener> listeners;
 
         public UiListenerHandler(String url, List<CacheListener> listeners) {

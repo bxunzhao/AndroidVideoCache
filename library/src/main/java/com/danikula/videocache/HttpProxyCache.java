@@ -22,8 +22,8 @@ class HttpProxyCache extends ProxyCache {
     private static final float NO_CACHE_BARRIER = .2f;
 
     private final HttpUrlSource source;
-    private final FileCache cache;
-    private CacheListener listener;
+    private final FileCache     cache;
+    private       CacheListener listener;
 
     public HttpProxyCache(HttpUrlSource source, FileCache cache) {
         super(source, cache);

@@ -2,7 +2,6 @@ package com.danikula.videocache;
 
 
 
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Proxy;
@@ -58,9 +57,9 @@ class Pinger {
                     return true;
                 }
             } catch (TimeoutException e) {
-                LOG.warn("Error pinging server (attempt: " + attempts + ", timeout: " + timeout + "). ");
+                HttpProxyCacheDebuger.printfWarning("Error pinging server (attempt: " + attempts + ", timeout: " + timeout + "). ");
             } catch (InterruptedException | ExecutionException e) {
-                LOG.error("Error pinging server due to unexpected error", e);
+                HttpProxyCacheDebuger.printfError("Error pinging server due to unexpected error", e);
             }
             attempts++;
             timeout *= 2;
@@ -69,7 +68,7 @@ class Pinger {
                         "If you see this message, please, report at https://github.com/danikula/AndroidVideoCache/issues/134. " +
                         "Default proxies are: %s"
                 , attempts, timeout / 2, getDefaultProxies());
-        LOG.error(error, new ProxyCacheException(error));
+        HttpProxyCacheDebuger.printfError(error, new ProxyCacheException(error));
         return false;
     }
 
@@ -101,10 +100,10 @@ class Pinger {
             byte[] response = new byte[expectedResponse.length];
             source.read(response);
             boolean pingOk = Arrays.equals(expectedResponse, response);
-            LOG.info("Ping response: `" + new String(response) + "`, pinged? " + pingOk);
+            HttpProxyCacheDebuger.printfLog("Ping response: `" + new String(response) + "`, pinged? " + pingOk);
             return pingOk;
         } catch (ProxyCacheException e) {
-            LOG.error("Error reading ping response", e);
+            HttpProxyCacheDebuger.printfError("Error reading ping response", e);
             return false;
         } finally {
             source.close();

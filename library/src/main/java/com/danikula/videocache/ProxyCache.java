@@ -1,8 +1,6 @@
 package com.danikula.videocache;
 
 
-
-
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.danikula.videocache.Preconditions.checkNotNull;
@@ -20,14 +18,14 @@ class ProxyCache {
 
     private static final int MAX_READ_SOURCE_ATTEMPTS = 1;
 
-    private final Source source;
-    private final Cache cache;
-    private final Object wc = new Object();
-    private final Object stopLock = new Object();
-    private final AtomicInteger readSourceErrorsCount;
-    private volatile Thread sourceReaderThread;
-    private volatile boolean stopped;
-    private volatile int percentsAvailable = -1;
+    private final    Source        source;
+    private final    Cache         cache;
+    private final    Object        wc = new Object();
+    private final    Object        stopLock = new Object();
+    private final    AtomicInteger readSourceErrorsCount;
+    private volatile Thread        sourceReaderThread;
+    private volatile boolean       stopped;
+    private volatile int           percentsAvailable = -1;
 
     public ProxyCache(Source source, Cache cache) {
         this.source = checkNotNull(source);
@@ -61,7 +59,6 @@ class ProxyCache {
 
     public void shutdown() {
         synchronized (stopLock) {
-            LOG.debug("Shutdown proxy for " + source);
             try {
                 stopped = true;
                 if (sourceReaderThread != null) {
@@ -173,9 +170,9 @@ class ProxyCache {
     protected final void onError(final Throwable e) {
         boolean interruption = e instanceof InterruptedProxyCacheException;
         if (interruption) {
-            LOG.debug("ProxyCache is interrupted");
+            HttpProxyCacheDebuger.printfLog("ProxyCache is interrupted");
         } else {
-            LOG.error("ProxyCache error", e);
+            HttpProxyCacheDebuger.printfError("ProxyCache error", e.getMessage());
         }
     }
 

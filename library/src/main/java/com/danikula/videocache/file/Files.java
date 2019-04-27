@@ -1,6 +1,6 @@
 package com.danikula.videocache.file;
 
-import com.danikula.videocache.LOG;
+import com.danikula.videocache.HttpProxyCacheDebuger;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,7 +51,8 @@ class Files {
                 modify(file);
                 if (file.lastModified() < now) {
                     // NOTE: apparently this is a known issue (see: http://stackoverflow.com/questions/6633748/file-lastmodified-is-never-what-was-set-with-file-setlastmodified)
-                    LOG.warn("Last modified date {} is not set for file {}", new Date(file.lastModified()).toString(), file.getAbsolutePath());
+                    HttpProxyCacheDebuger.printfWarning("Last modified date {} is not set for file {}", new Date(file.lastModified()).toString() + "\n" + file.getAbsolutePath());
+
                 }
             }
         }

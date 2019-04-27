@@ -16,9 +16,9 @@ public class FileCache implements Cache {
 
     private static final String TEMP_POSTFIX = ".download";
 
-    private final DiskUsage diskUsage;
-    public File file;
-    private RandomAccessFile dataFile;
+    private final DiskUsage        diskUsage;
+    public        File             file;
+    private       RandomAccessFile dataFile;
 
     public FileCache(File file) throws ProxyCacheException {
         this(file, new UnlimitedDiskUsage());

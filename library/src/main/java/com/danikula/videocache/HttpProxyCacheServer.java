@@ -52,14 +52,14 @@ public class HttpProxyCacheServer {
 
     private static final String PROXY_HOST = "127.0.0.1";
 
-    private final Object clientsLock = new Object();
-    private final ExecutorService socketProcessor = Executors.newFixedThreadPool(8);
-    private final Map<String, HttpProxyCacheServerClients> clientsMap = new ConcurrentHashMap<>();
-    private final ServerSocket serverSocket;
-    private final int port;
-    private final Thread waitConnectionThread;
-    private final Config config;
-    private final Pinger pinger;
+    private final Object                                   clientsLock     = new Object();
+    private final ExecutorService                          socketProcessor = Executors.newFixedThreadPool(8);
+    private final Map<String, HttpProxyCacheServerClients> clientsMap      = new ConcurrentHashMap<>();
+    private final ServerSocket                             serverSocket;
+    private final int                                      port;
+    private final Thread                                   waitConnectionThread;
+    private final Config                                   config;
+    private final Pinger                                   pinger;
 
     public HttpProxyCacheServer(Context context) {
         this(new Builder(context).buildConfig());
@@ -77,7 +77,7 @@ public class HttpProxyCacheServer {
             this.waitConnectionThread.start();
             startSignal.await(); // freeze thread, wait for server starts
             this.pinger = new Pinger(PROXY_HOST, port);
-            LOG.info("Proxy cache server started. Is it alive? " + isAlive());
+            HttpProxyCacheDebuger.printfLog("Proxy cache server started. Is it alive? " + isAlive());
         } catch (IOException | InterruptedException e) {
             socketProcessor.shutdown();
             throw new IllegalStateException("Error starting local proxy server", e);
@@ -124,7 +124,7 @@ public class HttpProxyCacheServer {
             try {
                 getClients(url).registerCacheListener(cacheListener);
             } catch (ProxyCacheException e) {
-                LOG.warn("Error registering cache listener", e);
+                HttpProxyCacheDebuger.printfWarning("Error registering cache listener", e.getMessage());
             }
         }
     }
@@ -135,7 +135,7 @@ public class HttpProxyCacheServer {
             try {
                 getClients(url).unregisterCacheListener(cacheListener);
             } catch (ProxyCacheException e) {
-                LOG.warn("Error registering cache listener", e);
+                HttpProxyCacheDebuger.printfWarning("Error registering cache listener", e.getMessage());
             }
         }
     }
@@ -161,7 +161,7 @@ public class HttpProxyCacheServer {
     }
 
     public void shutdown() {
-        LOG.info("Shutdown proxy server");
+        HttpProxyCacheDebuger.printfLog("Shutdown proxy server");
 
         shutdownClients();
 
@@ -195,7 +195,7 @@ public class HttpProxyCacheServer {
         try {
             config.diskUsage.touch(cacheFile);
         } catch (IOException e) {
-            LOG.error("Error touching file " + cacheFile, e);
+            HttpProxyCacheDebuger.printfError("Error touching file " + cacheFile, e);
         }
     }
 
@@ -212,7 +212,6 @@ public class HttpProxyCacheServer {
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 Socket socket = serverSocket.accept();
-                LOG.debug("Accept new socket " + socket);
                 socketProcessor.submit(new SocketProcessorRunnable(socket));
             }
         } catch (IOException e) {
@@ -223,7 +222,6 @@ public class HttpProxyCacheServer {
     private void processSocket(Socket socket) {
         try {
             GetRequest request = GetRequest.read(socket.getInputStream());
-            LOG.debug("Request to cache proxy:" + request);
             String url = ProxyCacheUtils.decode(request.uri);
             if (pinger.isPingRequest(url)) {
                 pinger.responseToPing(socket);
@@ -234,12 +232,11 @@ public class HttpProxyCacheServer {
         } catch (SocketException e) {
             // There is no way to determine that client closed connection http://stackoverflow.com/a/10241044/999458
             // So just to prevent log flooding don't log stacktrace
-            LOG.debug("Closing socket… Socket is closed by client.");
         } catch (ProxyCacheException | IOException e) {
             onError(new ProxyCacheException("Error processing request", e));
         } finally {
             releaseSocket(socket);
-            LOG.debug("Opened connections: " + getClientsCount());
+            HttpProxyCacheDebuger.printfLog("Opened connections: " + getClientsCount());
         }
     }
 
@@ -278,9 +275,8 @@ public class HttpProxyCacheServer {
         } catch (SocketException e) {
             // There is no way to determine that client closed connection http://stackoverflow.com/a/10241044/999458
             // So just to prevent log flooding don't log stacktrace
-            LOG.debug("Releasing input stream… Socket is closed by client.");
         } catch (IOException e) {
-            onError(new ProxyCacheException("Error closing socket input stream", e));
+           // onError(new ProxyCacheException("Error closing socket input stream", e));
         }
     }
 
@@ -290,7 +286,7 @@ public class HttpProxyCacheServer {
                 socket.shutdownOutput();
             }
         } catch (IOException e) {
-            LOG.warn("Failed to close socket on proxy side: {}. It seems client have already closed connection.", e.getMessage());
+            HttpProxyCacheDebuger.printfWarning("Failed to close socket on proxy side: {}. It seems client have already closed connection.", e.getMessage());
         }
     }
 
@@ -300,12 +296,12 @@ public class HttpProxyCacheServer {
                 socket.close();
             }
         } catch (IOException e) {
-            onError(new ProxyCacheException("Error closing socket", e));
+            //onError(new ProxyCacheException("Error closing socket", e));
         }
     }
 
     private void onError(Throwable e) {
-        LOG.error("HttpProxyCacheServer error", e);
+        HttpProxyCacheDebuger.printfError("HttpProxyCacheServer error", e.getMessage());
     }
 
     private final class WaitRequestsRunnable implements Runnable {
@@ -344,11 +340,11 @@ public class HttpProxyCacheServer {
 
         private static final long DEFAULT_MAX_SIZE = 512 * 1024 * 1024;
 
-        private File cacheRoot;
+        private File              cacheRoot;
         private FileNameGenerator fileNameGenerator;
-        private DiskUsage diskUsage;
+        private DiskUsage         diskUsage;
         private SourceInfoStorage sourceInfoStorage;
-        private HeaderInjector headerInjector;
+        private HeaderInjector    headerInjector;
 
         public Builder(Context context) {
             this.sourceInfoStorage = SourceInfoStorageFactory.newSourceInfoStorage(context);

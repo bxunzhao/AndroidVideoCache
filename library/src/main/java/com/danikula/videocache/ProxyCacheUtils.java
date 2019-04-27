@@ -3,9 +3,6 @@ package com.danikula.videocache;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
-
-
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -71,7 +68,7 @@ public class ProxyCacheUtils {
             try {
                 closeable.close();
             } catch (IOException e) {
-                LOG.error("Error closing resource", e);
+                HttpProxyCacheDebuger.printfError("Error closing resource", e);
             }
         }
     }

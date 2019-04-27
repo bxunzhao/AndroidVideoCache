@@ -3,9 +3,6 @@ package com.danikula.videocache;
 import android.content.Context;
 import android.os.Environment;
 
-
-
-
 import java.io.File;
 
 import static android.os.Environment.MEDIA_MOUNTED;
@@ -44,7 +41,7 @@ final class StorageUtils {
      * @param preferExternal Whether prefer external location for cache
      * @return Cache {@link File directory}.<br />
      * <b>NOTE:</b> Can be null in some unpredictable cases (if SD card is unmounted and
-     * {@link android.content.Context#getCacheDir() Context.getCacheDir()} returns null).
+     * {@link Context#getCacheDir() Context.getCacheDir()} returns null).
      */
     private static File getCacheDirectory(Context context, boolean preferExternal) {
         File appCacheDir = null;
@@ -62,7 +59,7 @@ final class StorageUtils {
         }
         if (appCacheDir == null) {
             String cacheDirPath = "/data/data/" + context.getPackageName() + "/cache/";
-            LOG.warn("Can't define system cache directory! '" + cacheDirPath + "%s' will be used.");
+            HttpProxyCacheDebuger.printfWarning("Can't define system cache directory! '" + cacheDirPath + "%s' will be used.");
             appCacheDir = new File(cacheDirPath);
         }
         return appCacheDir;
@@ -73,7 +70,7 @@ final class StorageUtils {
         File appCacheDir = new File(new File(dataDir, context.getPackageName()), "cache");
         if (!appCacheDir.exists()) {
             if (!appCacheDir.mkdirs()) {
-                LOG.warn("Unable to create external cache directory");
+                HttpProxyCacheDebuger.printfWarning("Unable to create external cache directory");
                 return null;
             }
         }
