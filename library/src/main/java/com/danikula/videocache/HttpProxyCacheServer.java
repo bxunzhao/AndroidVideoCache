@@ -59,7 +59,7 @@ public class HttpProxyCacheServer {
     private final int                                      port;
     private final Thread                                   waitConnectionThread;
     private final Config                                   config;
-    private final Pinger                                   pinger;
+//    private final Pinger                                   pinger;
 
     public HttpProxyCacheServer(Context context) {
         this(new Builder(context).buildConfig());
@@ -76,7 +76,7 @@ public class HttpProxyCacheServer {
             this.waitConnectionThread = new Thread(new WaitRequestsRunnable(startSignal));
             this.waitConnectionThread.start();
             startSignal.await(); // freeze thread, wait for server starts
-            this.pinger = new Pinger(PROXY_HOST, port);
+//            this.pinger = new Pinger(PROXY_HOST, port);
             HttpProxyCacheDebuger.printfLog("Proxy cache server started. Is it alive? " + isAlive());
         } catch (IOException | InterruptedException e) {
             socketProcessor.shutdown();
@@ -178,7 +178,8 @@ public class HttpProxyCacheServer {
     }
 
     private boolean isAlive() {
-        return pinger.ping(3, 70);   // 70+140+280=max~500ms
+//        return pinger.ping(3, 70);   // 70+140+280=max~500ms
+        return true;
     }
 
     private String appendToProxyUrl(String url) {
@@ -223,12 +224,8 @@ public class HttpProxyCacheServer {
         try {
             GetRequest request = GetRequest.read(socket.getInputStream());
             String url = ProxyCacheUtils.decode(request.uri);
-            if (pinger.isPingRequest(url)) {
-                pinger.responseToPing(socket);
-            } else {
-                HttpProxyCacheServerClients clients = getClients(url);
-                clients.processRequest(request, socket);
-            }
+            HttpProxyCacheServerClients clients = getClients(url);
+            clients.processRequest(request, socket);
         } catch (SocketException e) {
             // There is no way to determine that client closed connection http://stackoverflow.com/a/10241044/999458
             // So just to prevent log flooding don't log stacktrace
