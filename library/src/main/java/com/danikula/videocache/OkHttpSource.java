@@ -174,6 +174,7 @@ public class OkHttpSource extends UrlSource {
             if (offset > 0) {
                 requestBuilder.addHeader("Range", "bytes=" + offset + "-");
             }
+            requestBuilder.addHeader("Connection", "close");
             injectCustomHeaders(requestBuilder, url);
             response = httpClient.build().newCall(requestBuilder.build()).execute();
             if (response.isRedirect()) {
